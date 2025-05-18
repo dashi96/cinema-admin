@@ -20,7 +20,7 @@ $ npm install
 
 ## Running the app
 
-Copy the .env.example file in both the backend and frontend directories to a new file named .env, and fill in the required values.
+Copy the .env.example file in both the backend and frontend directories to a new file named .env and fill in the required values.
 
 ### Backend
 
