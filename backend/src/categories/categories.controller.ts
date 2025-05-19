@@ -1,8 +1,8 @@
 import { Controller, Get, Post, Body } from '@nestjs/common'
 
-import { CategoriesService } from './categories.service'
-import { Bulk_updateDto } from '../common/dto/bulk_update.dto'
 import { Category } from './entities/category.entity'
+import { CategoriesService } from './categories.service'
+import { BulkUpdateDto } from '../common/dto/bulk_update_dto'
 
 @Controller('categories')
 export class CategoriesController {
@@ -14,7 +14,7 @@ export class CategoriesController {
   }
 
   @Post('bulk')
-  async bulkUpdate(@Body() dto: Bulk_updateDto): Promise<boolean> {
+  async bulkUpdate(@Body() dto: BulkUpdateDto): Promise<boolean> {
     return this.categoriesService.bulkUpdate(dto)
   }
 }

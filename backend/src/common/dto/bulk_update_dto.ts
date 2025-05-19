@@ -1,10 +1,10 @@
-import { IsArray, ValidateNested } from 'class-validator'
 import { Type } from 'class-transformer'
+import { IsArray, ValidateNested } from 'class-validator'
 
 import { CreateCategoryDto } from '../../categories/dto/create_category.dto'
 import { UpdateCategoryDto } from '../../categories/dto/update_category.dto'
 
-export class Bulk_updateDto {
+export class BulkUpdateDto {
   @IsArray()
   @ValidateNested({ each: true })
   @Type(() => CreateCategoryDto)

@@ -1,11 +1,12 @@
-import { Test, TestingModule } from '@nestjs/testing'
-import { CategoriesService } from './categories.service'
-import { getRepositoryToken } from '@nestjs/typeorm'
-import { Category } from './entities/category.entity'
-import { SubCategory } from './entities/sub_category.entity'
 import { Repository } from 'typeorm'
 import { NotFoundException } from '@nestjs/common'
-import { Bulk_updateDto } from '../common/dto/bulk_update.dto'
+import { getRepositoryToken } from '@nestjs/typeorm'
+import { Test, TestingModule } from '@nestjs/testing'
+
+import { Category } from './entities/category.entity'
+import { CategoriesService } from './categories.service'
+import { SubCategory } from './entities/sub_category.entity'
+import { BulkUpdateDto } from '../common/dto/bulk_update_dto'
 
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>
 
@@ -44,7 +45,7 @@ describe('CategoriesService', () => {
 
   describe('bulkUpdate', () => {
     it('should delete existing categories', async () => {
-      const dto: Bulk_updateDto = {
+      const dto: BulkUpdateDto = {
         deletedCategories: [{ id: 1 }],
         updatedCategories: [],
         newCategories: []
@@ -61,7 +62,7 @@ describe('CategoriesService', () => {
     })
 
     it('should skip deletion if category not found', async () => {
-      const dto: Bulk_updateDto = {
+      const dto: BulkUpdateDto = {
         deletedCategories: [{ id: 2 }],
         updatedCategories: [],
         newCategories: []
@@ -77,7 +78,7 @@ describe('CategoriesService', () => {
     })
 
     it('should throw NotFoundException if updated category not found', async () => {
-      const dto: Bulk_updateDto = {
+      const dto: BulkUpdateDto = {
         deletedCategories: [],
         updatedCategories: [{ id: 3, name: 'Updated', subCategories: [] }],
         newCategories: []
@@ -89,7 +90,7 @@ describe('CategoriesService', () => {
     })
 
     it('should update existing categories and add new subcategories', async () => {
-      const dto: Bulk_updateDto = {
+      const dto: BulkUpdateDto = {
         deletedCategories: [],
         updatedCategories: [
           {
@@ -115,7 +116,7 @@ describe('CategoriesService', () => {
     })
 
     it('should create new categories', async () => {
-      const dto: Bulk_updateDto = {
+      const dto: BulkUpdateDto = {
         deletedCategories: [],
         updatedCategories: [],
         newCategories: [{ name: 'New Category', subCategories: [] }]

@@ -4,7 +4,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 
 import { Category } from './entities/category.entity'
 import { SubCategory } from './entities/sub_category.entity'
-import { Bulk_updateDto } from '../common/dto/bulk_update.dto'
+import { BulkUpdateDto } from '../common/dto/bulk_update_dto'
 
 @Injectable()
 export class CategoriesService {
@@ -17,7 +17,7 @@ export class CategoriesService {
     return this.categoryRepository.find()
   }
 
-  async bulkUpdate(dto: Bulk_updateDto): Promise<boolean> {
+  async bulkUpdate(dto: BulkUpdateDto): Promise<boolean> {
     // handle deletions
     if (dto.deletedCategories.length) {
       for (const category of dto.deletedCategories) {
