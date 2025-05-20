@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, Index } from 'typeorm'
 
 import { SubCategory } from './sub_category.entity'
 
@@ -8,6 +8,7 @@ export class Category {
   id: number
 
   @Column()
+  @Index({ unique: true })
   name: string
 
   @OneToMany(() => SubCategory, (sc) => sc.category, { cascade: true, eager: true })

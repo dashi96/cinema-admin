@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index } from 'typeorm'
 
 import { Category } from './category.entity'
 
@@ -8,6 +8,7 @@ export class SubCategory {
   id: number
 
   @Column()
+  @Index({ unique: true })
   name: string
 
   @Column('int', { array: true })

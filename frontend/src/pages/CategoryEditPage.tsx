@@ -25,20 +25,64 @@ const CategoryEditPage: FC = () => {
   }, [id, categories, isNew])
 
   const handleSave = () => {
-    const updated: Category = { id: isNew ? undefined : Number(id), name, subCategories: subs }
+    const updated: Category = {
+      id: isNew ? undefined : Number(id),
+      name,
+      subCategories: Array.from(new Map(subs.map((sub) => [sub.name, sub])).values())
+    }
 
     if (isNew) {
-      setChanges((prev) => ({
-        ...prev,
-        newCategories: [...prev.newCategories, updated]
-      }))
-      setCategories((prev) => [...prev, { ...updated, id: Date.now() }])
+      setChanges((prev) => {
+        const newCatsList = [...prev.newCategories]
+        const existCatIndex = newCatsList.findIndex((c) => c.name === updated.name)
+
+        if (existCatIndex !== -1) {
+          newCatsList[existCatIndex] = updated
+        } else {
+          newCatsList.push(updated)
+        }
+
+        return {
+          ...prev,
+          newCategories: newCatsList
+        }
+      })
+
+      setCategories((prev) => {
+        const list = [...prev]
+        const existCatIndex = list.findIndex((c) => c.name === updated.name)
+        if (existCatIndex !== -1) {
+          list[existCatIndex] = { ...updated, id: Date.now() }
+        } else {
+          list.push({ ...updated, id: Date.now() })
+        }
+        return list
+      })
     } else {
-      setChanges((prev) => ({
-        ...prev,
-        updatedCategories: [...prev.updatedCategories, updated]
-      }))
-      setCategories((prev) => prev.map((c) => (c.id === updated.id ? updated : c)))
+      setChanges((prev) => {
+        const newCatsList = [...prev.newCategories]
+        const newCatIndex = newCatsList.findIndex((cat) => cat.name === updated.name)
+        if (newCatIndex !== -1) {
+          newCatsList[newCatIndex] = updated
+          return {
+            ...prev,
+            newCategories: newCatsList
+          }
+        }
+
+        const updCatList = [...prev.updatedCategories]
+        const existUpdCatIndex = updCatList.findIndex((cat) => cat.name === updated.name)
+        if (existUpdCatIndex !== -1) {
+          updCatList[existUpdCatIndex] = updated
+        } else {
+          updCatList.push(updated)
+        }
+        return {
+          ...prev,
+          updatedCategories: updCatList
+        }
+      })
+      setCategories((prev) => prev.map((cat) => (cat.id === updated.id ? updated : cat)))
     }
 
     navigate('/')
@@ -66,7 +110,7 @@ const CategoryEditPage: FC = () => {
 
     setChanges((prev) => ({
       ...prev,
-      deletedCategories: [deletionCat]
+      deletedCategories: [...prev.deletedCategories, deletionCat]
     }))
     setCategories((prev) => prev.filter((cat) => cat.id !== Number(id)))
 
