@@ -16,7 +16,7 @@ const CategoryEditPage: FC = () => {
 
   useEffect(() => {
     if (!isNew) {
-      const category = categories.find((cat) => cat.id === Number(id))
+      const category = categories.find((cat) => cat.id == id)
       if (category) {
         setName(category.name)
         setSubs(category.subCategories)
@@ -26,13 +26,21 @@ const CategoryEditPage: FC = () => {
 
   const handleSave = () => {
     const updated: Category = {
-      id: isNew ? undefined : Number(id),
+      id: isNew ? `tmp_${Date.now()}` : id,
       name,
       subCategories: Array.from(new Map(subs.map((sub) => [sub.name, sub])).values())
     }
 
     if (isNew) {
       setChanges((prev) => {
+        const existCat = categories?.find((cat) => cat.name === updated.name)
+        if (existCat) {
+          return {
+            ...prev,
+            updatedCategories: [...prev.updatedCategories, { ...updated, id: existCat.id }]
+          }
+        }
+
         const newCatsList = [...prev.newCategories]
         const existCatIndex = newCatsList.findIndex((c) => c.name === updated.name)
 
@@ -52,16 +60,16 @@ const CategoryEditPage: FC = () => {
         const list = [...prev]
         const existCatIndex = list.findIndex((c) => c.name === updated.name)
         if (existCatIndex !== -1) {
-          list[existCatIndex] = { ...updated, id: Date.now() }
+          list[existCatIndex] = updated
         } else {
-          list.push({ ...updated, id: Date.now() })
+          list.push(updated)
         }
         return list
       })
     } else {
       setChanges((prev) => {
         const newCatsList = [...prev.newCategories]
-        const newCatIndex = newCatsList.findIndex((cat) => cat.name === updated.name)
+        const newCatIndex = newCatsList.findIndex((cat) => cat.id === updated.id || cat.name === updated.name)
         if (newCatIndex !== -1) {
           newCatsList[newCatIndex] = updated
           return {
@@ -82,7 +90,7 @@ const CategoryEditPage: FC = () => {
           updatedCategories: updCatList
         }
       })
-      setCategories((prev) => prev.map((cat) => (cat.id === updated.id ? updated : cat)))
+      setCategories((prev) => prev.map((cat) => (cat.id == updated.id ? updated : cat)))
     }
 
     navigate('/')
@@ -105,14 +113,20 @@ const CategoryEditPage: FC = () => {
   }
 
   const removeCat = () => {
-    const deletionCat = categories.find((cat) => cat.id === Number(id))
+    const deletionCat = categories.find((cat) => cat.id == id)
     if (!deletionCat) return
 
     setChanges((prev) => ({
       ...prev,
-      deletedCategories: [...prev.deletedCategories, deletionCat]
+      deletedCategories: `${deletionCat.id}`.includes('tmp')
+        ? prev.deletedCategories
+        : [...prev.deletedCategories, deletionCat],
+      newCategories: `${deletionCat.id}`.includes('tmp')
+        ? prev.newCategories.filter((cat) => cat.id != deletionCat.id)
+        : prev.newCategories,
+      updatedCategories: prev.updatedCategories.filter((cat) => cat.id != deletionCat.id)
     }))
-    setCategories((prev) => prev.filter((cat) => cat.id !== Number(id)))
+    setCategories((prev) => prev.filter((cat) => cat.id != id))
 
     navigate('/')
   }

@@ -27,7 +27,18 @@ const CategoryListPage: FC = () => {
 
     setLoading(true)
     try {
-      await saveCategoriesBulk(changes)
+      const bulk: Bulk = {
+        ...changes,
+        newCategories: changes.newCategories.map((cat) => ({
+          name: cat.name,
+          subCategories: cat.subCategories
+        })),
+        updatedCategories: changes.updatedCategories.map((cat) => ({
+          ...cat,
+          id: Number(cat.id)
+        }))
+      }
+      await saveCategoriesBulk(bulk)
       handleOpenSnack()
       setChanges({
         newCategories: [],

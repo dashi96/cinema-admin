@@ -1,5 +1,5 @@
 type Category = {
-  id?: number
+  id?: number | string
   name: string
   subCategories: SubCategory[]
 }
